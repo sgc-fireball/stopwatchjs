@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>StopWatchJS</title>
+    </head>
+    <body data-stopwatch="1">
+        <h1>StopWatchJS</h1>
+        <div style="background-color: red;height:2000px;"></div>
+        <script type="text/javascript"
+                src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.min.js"></script>
+        <script type="text/javascript">
+            require.config({
+                paths: {
+                    "StopWatch": "../src"
+                }
+            });
+            define('main',['StopWatch/StopWatch'],function(StopWatch){
+                StopWatch.start('initialisation','section');
+                StopWatch.start('R.js','loading');
+                var i = setInterval(function(){ StopWatch.lap('R.js'); },100);
+                setTimeout(function(){ clearInterval(i); StopWatch.stop('R.js'); StopWatch.stop('initialisation'); },500);
+                setTimeout(function(){ StopWatch.start('working','section'); },500);
+
+                setTimeout(function(){ StopWatch.openSection(); },550);
+                setTimeout(function(){ StopWatch.start('render','template'); },600);
+                setTimeout(function(){ StopWatch.stop('render'); },800);
+                setTimeout(function(){ StopWatch.stopSection('sub'); },900);
+
+                setTimeout(function(){ StopWatch.stop('working'); },1000);
+                setTimeout(function(){ StopWatch.getExporter().getViewer().open(); },1250);
+            });
+            require(['main']);
+        </script>
+    </body>
+</html>
