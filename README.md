@@ -31,6 +31,9 @@ define(['StopWatch/StopWatch'],function(StopWatch){
 });
 ```
 
+## Example
+![example1.png](examples/example1.png)
+
 ## Copyright and License
 Richard Hülsberg - [rh+github@hrdns.de](mailto:rh+github@hrdns.de) - <https://www.hrdns.de>
 You can read the license [here](LICENSE.md)

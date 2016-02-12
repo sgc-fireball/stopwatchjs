@@ -1,0 +1,14 @@
+.gitattributes text eol=lf export-ignore
+.gitignore text eol=lf export-ignore
+.travis.yml text eol=lf export-ignore
+* text=auto
+*.xml text eol=lf
+*.dist text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.JPEG binary
+*.JPG binary
+*.PNG binary
+*.jpeg binary
+*.jpg binary
+*.png binary
