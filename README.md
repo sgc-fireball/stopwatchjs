@@ -7,6 +7,7 @@ Please read his [license](https://raw.githubusercontent.com/symfony/stopwatch/ma
 
 ## Installation
 ### Composer
+[https://packagist.org/packages/sgc-fireball/stopwatchjs](https://packagist.org/packages/sgc-fireball/stopwatchjs)
 ```bash
 composer require sgc-fireball/stopwatchjs
 ```
