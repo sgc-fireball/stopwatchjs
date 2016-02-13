@@ -48,15 +48,6 @@
     }
 
     /**
-     * Gets the category.
-     *
-     * @return {string} The category
-     */
-    StopWatchEvent.prototype.getCategory = function () {
-        return this.categpry;
-    };
-
-    /**
      * Gets the origin.
      *
      * @return {number} The origin in milliseconds
@@ -66,6 +57,25 @@
     };
 
     /**
+     * Gets the category.
+     *
+     * @return {string} The category
+     */
+    StopWatchEvent.prototype.getCategory = function () {
+        return this.categpry;
+    };
+
+    /**
+     * Gets all event periods.
+     *
+     * @return {StopWatchPeriod[]} An array of StopWatchPeriod instances.
+     */
+    StopWatchEvent.prototype.getPeriods = function () {
+        return this.periods;
+    };
+
+
+    /**
      * Starts a new event period.
      *
      * @return {StopWatchEvent} The event.
@@ -73,6 +83,15 @@
     StopWatchEvent.prototype.start = function () {
         this.started.push(this.getNow());
         return this;
+    };
+
+    /**
+     * Stops the current period and then starts a new one.
+     *
+     * @return {StopWatchEvent} The event.
+     */
+    StopWatchEvent.prototype.lap = function () {
+        return this.stop().start();
     };
 
     /**
@@ -88,36 +107,6 @@
         }
         this.periods.push(new StopWatchPeriod(this.started.pop(), this.getNow()));
         return this;
-    };
-
-    /**
-     * Stops the current period and then starts a new one.
-     *
-     * @return {StopWatchEvent} The event.
-     */
-    StopWatchEvent.prototype.lap = function () {
-        return this.stop().start();
-    };
-
-    /**
-     * Stops all non already stopped periods.
-     *
-     * @return {StopWatchEvent} The event.
-     */
-    StopWatchEvent.prototype.ensureStopped = function () {
-        while (this.started.length) {
-            this.stop();
-        }
-        return this;
-    };
-
-    /**
-     * Gets all event periods.
-     *
-     * @return {StopWatchPeriod[]} An array of StopWatchPeriod instances.
-     */
-    StopWatchEvent.prototype.getPeriods = function () {
-        return this.periods;
     };
 
     /**
@@ -154,10 +143,8 @@
             periods.push(new StopWatchPeriod(this.started[_index], this.getNow()));
         }
         var _total = 0;
-        for (_index in periods) {
-            if (periods.hasOwnProperty(_index)) {
-                _total += periods[_index].getDuration();
-            }
+        for (_index=0;_index<periods.length;_index++) {
+            _total += periods[_index].getDuration();
         }
         return _total;
     };
