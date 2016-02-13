@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>StopWatchJS</title>
+    </head>
+    <body data-stopwatch="1">
+        <h1>StopWatchJS</h1>
+        <script type="text/javascript"
+                src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.min.js"></script>
+        <script type="text/javascript">
+            require.config({
+                paths: {
+                    "StopWatch": "../src"
+                }
+            });
+            define('main',['StopWatch/StopWatch'],function(StopWatch){
+                window.StopWatch = StopWatch;
+
+                StopWatch.start('initialisation','section');
+                var worker = new Worker('./worker/worker1.js');
+                var workerSection = StopWatch.openSection('WebWorker');
+                worker.addEventListener('message',function(e){
+                   var data = e.data;
+                    switch (data.cmd) {
+                        case 'msg': window.console.log(data.msg); break;
+                        case 'start': workerSection.start(data.event,data.category); break;
+                        case 'lap': workerSection.lap(data.event); break;
+                        case 'stop': workerSection.stop(data.event); break;
+                    }
+                });
+                StopWatch.stop('initialisation');
+
+                StopWatch.start('waiting','section');
+                setTimeout(function(){
+                    worker.postMessage({'cmd':'stop'});
+                    StopWatch.closeSection(workerSection);
+                    StopWatch.stop('waiting');
+                    StopWatch.start('workingResult','section');
+                },1000);
+
+                setTimeout(function(){ StopWatch.stop('workingResult'); },1100);
+
+                setTimeout(function(){ StopWatch.getExporter().getViewer().open(); },1250);
+            });
+            require(['main']);
+        </script>
+    </body>
+</html>

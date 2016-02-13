@@ -91,15 +91,6 @@
     };
 
     /**
-     * Checks if the event was started.
-     *
-     * @return {boolean}
-     */
-    StopWatchEvent.prototype.isStarted = function () {
-        return !!this.started.length;
-    };
-
-    /**
      * Stops the current period and then starts a new one.
      *
      * @return {StopWatchEvent} The event.

@@ -235,7 +235,7 @@
             'fill: ' + this.parameters.colors.text + ';' +
             'font-size: 24px; font-family: sans-serif;'
         );
-        tspan.innerHTML = request.id == 'main' ? 'Main Request' : 'Worker: ' + request.id;
+        tspan.innerHTML = request.id == 'main' ? 'Main Request' : request.id;
         text.appendChild(tspan);
         svg.appendChild(text);
 

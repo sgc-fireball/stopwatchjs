@@ -47,20 +47,26 @@
          * @type {StopWatchSection[]}
          * @private
          */
-        var section = new StopWatchSection(this.origin);
-        section.setId('main');
-        this.activeSections = [section];
+        this.sections = {'main': new StopWatchSection(this.origin,'main')};
 
         /**
-         * @type {StopWatchSection[]}
-         * @private
+         * @TODO refactor!
          */
-        this.sections = {'root': section};
-
         this.exporter = new StopWatchExporter(this);
     }
 
     /**
+     * Return the start time.
+     *
+     * @returns {number} Return the start time.
+     */
+    StopWatch.prototype.getOrigin = function () {
+        return this.origin;
+    };
+
+    /**
+     * Returns all sections.
+     *
      * @return {StopWatchSection[]}
      */
     StopWatch.prototype.getSections = function () {
@@ -69,68 +75,76 @@
 
     /**
      * Creates a new section or re-opens an existing section.
+     * The id parameter is used to retrieve the section or to create a new one.
      *
      * @see getSectionEvents()
      * @param {string|null} id The id of the session to re-open, null to create a new one
      * @return {StopWatchSection} A StopWatchSection instance.
-     * @throws {StopWatchException} When the section to re-open is not reachable.
+     * @throws {StopWatchException} When argument id is missing.
      */
     StopWatch.prototype.openSection = function (id) {
-
-        id = !!id ? id : null;
-        var current = this.activeSections[this.activeSections.length - 1];
-
-        if (!!id && !current.get(id)) {
-            throw new StopWatchException(
-                PHPJS.sprintf('The section "%s" has been started at an other level and can not be opened.', id)
-            );
+        if (!id) {
+            throw new StopWatchException('Missing argument id.');
         }
-
-        this.start('__section__.child', 'section');
-        var section = current.open(id);
-        this.activeSections.push(section);
-        this.start('__section__');
-        return section;
+        this.sections['main'].start('__section__.child', 'section');
+        this.sections[id] = !!this.sections[id] ? this.sections[id] : new StopWatchSection(PHPJS.microtime(true)*1000,id);
+        this.sections[id].start('__section__','default');
+        return this.sections[id];
     };
 
     /**
-     * Stops the last started section.
-     * The id parameter is used to retrieve the events from this section.
+     * Stops a section.
+     * The id parameter is used to retrieve the section.
      *
      * @see getSectionEvents()
-     * @param {string} id The identifier of the section.
+     * @param {string|StopWatchSection} id The identifier of the section.
      * @return {StopWatch} The StopWatch instance.
-     * @throws {StopWatchException} When there's no started section to be stopped.
+     * @throws {StopWatchException} When argument id is missing.
+     * @throws {StopWatchException} When the section could not be found.
      */
-    StopWatch.prototype.stopSection = function (id) {
-        if (this.activeSections.length == 1) {
-            throw new StopWatchException('There is no started section to stop.');
+    StopWatch.prototype.closeSection = function (id) {
+        if (!id) {
+            throw new StopWatchException('Missing argument id.');
         }
-        this.stop('__section__');
-        var section = this.activeSections.pop();
-        this.sections[id] = section.setId(id);
-        this.stop('__section__.child');
+        id = id instanceof StopWatchSection ? id.getId() : id;
+        if (!this.sections[id]) {
+            throw new StopWatchException(
+                PHPJS.sprintf('Section "%s" is unknown.', id)
+            );
+        }
+        this.sections[id].stop('__section__');
+        this.sections['main'].stop('__section__.child');
         return this;
     };
 
     /**
+     * Start an event.
+     *
      * @param {string} name The event name.
      * @param {string} category The event category.
      * @return {StopWatchEvent|null} A StopWatchEvent instance.
+     * @throws {StopWatchException} When argument name is missing.
      */
     StopWatch.prototype.start = function (name, category) {
-        category = !!category ? category : '';
-        return this.activeSections[this.activeSections.length - 1].start(name, category);
+        if (!name) {
+            throw new StopWatchException('Missing argument name.');
+        }
+        category = !!category ? category : 'default';
+        return this.sections['main'].start(name, category);
     };
 
     /**
-     * Checks if the event was started.
+     * Restart an event.
      *
      * @param {string} name The event name.
-     * @return {boolean}
+     * @return {StopWatchEvent|null} A StopWatchEvent instance.
+     * @throws {StopWatchException} When argument name is missing.
      */
-    StopWatch.prototype.isStarted = function (name) {
-        return this.activeSections[this.activeSections.length - 1].isEventStarted(name);
+    StopWatch.prototype.lap = function (name) {
+        if (!name) {
+            throw new StopWatchException('Missing argument name.');
+        }
+        return this.sections['main'].stop(name).start();
     };
 
     /**
@@ -140,51 +154,15 @@
      * @return {StopWatchEvent|null} A StopWatchEvent instance.
      */
     StopWatch.prototype.stop = function (name) {
-        return this.activeSections[this.activeSections.length - 1].stop(name);
-    };
-
-    /**
-     * Stops then restarts an event.
-     *
-     * @param {string} name The event name.
-     * @return {StopWatchEvent|null} A StopWatchEvent instance.
-     */
-    StopWatch.prototype.lap = function (name) {
-        if (!this.activeSections.length) {
-            return null;
+        if (!name) {
+            throw new StopWatchException('Missing argument name.');
         }
-        var section = this.activeSections[this.activeSections.length - 1];
-        return section.stop(name).start();
+        return this.sections['main'].stop(name);
     };
 
     /**
-     * Returns a specific event by name.
-     *
-     * @param {string} name The event name.
-     * @return {StopWatchEvent|null} A StopWatchEvent instance.
+     * @TODO refactor!
      */
-    StopWatch.prototype.getEvent = function (name) {
-        if (!this.activeSections.length) {
-            return null;
-        }
-        var section = this.activeSections[this.activeSections.length - 1];
-        return section.getEvent(name);
-    };
-
-    /**
-     * Gets all events for a given section.
-     *
-     * @param {string} id A section identifier.
-     * @return {StopWatchEvent[]} An array of StopWatchEvent instances.
-     */
-    StopWatch.prototype.getSectionEvents = function (id) {
-        return !!this.sections[id] ? this.sections[id].getEvents() : [];
-    };
-
-    StopWatch.prototype.getOrigin = function () {
-        return this.origin;
-    };
-
     StopWatch.prototype.getExporter = function () {
         return this.exporter;
     };

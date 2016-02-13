@@ -14,16 +14,19 @@
                 }
             });
             define('main',['StopWatch/StopWatch'],function(StopWatch){
+                window.StopWatch = StopWatch;
+
+                var section = null;
                 StopWatch.start('initialisation','section');
                 StopWatch.start('R.js','loading');
                 var i = setInterval(function(){ StopWatch.lap('R.js'); },100);
                 setTimeout(function(){ clearInterval(i); StopWatch.stop('R.js'); StopWatch.stop('initialisation'); },500);
                 setTimeout(function(){ StopWatch.start('working','section'); },500);
 
-                setTimeout(function(){ StopWatch.openSection(); },550);
-                setTimeout(function(){ StopWatch.start('render','template'); },600);
-                setTimeout(function(){ StopWatch.stop('render'); },800);
-                setTimeout(function(){ StopWatch.stopSection('sub'); },900);
+                setTimeout(function(){ section = StopWatch.openSection('SubProcess'); },550);
+                setTimeout(function(){ section.start('render','template'); },600);
+                setTimeout(function(){ section.stop('render'); },800);
+                setTimeout(function(){ StopWatch.closeSection(section); },900);
 
                 setTimeout(function(){ StopWatch.stop('working'); },1000);
                 setTimeout(function(){ StopWatch.getExporter().getViewer().open(); },1250);

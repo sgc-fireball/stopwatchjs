@@ -21,13 +21,13 @@ bower install hrdns-stopwatchjs
 define(['StopWatch/StopWatch'],function(StopWatch){
     StopWatch.start('loading','section');
     // do something
-    StopWatch.openSection();
+    var section = StopWatch.openSection('nameOfSection');
     // do something
-    StopWatch.start('eventName','category');
+    section.start('eventName','category');
     // do something
-    StopWatch.stop('eventName');
+    section.stop('eventName');
     // do something
-    StopWatch.stopSection('nameOfSection');
+    StopWatch.closeSection('nameOfSection');
     // do something
     StopWatch.stop('loading');
 });
@@ -35,8 +35,9 @@ define(['StopWatch/StopWatch'],function(StopWatch){
 
 ## Example
 ![requirejs.png](examples/example.png)
-- [old school](examples/old_school.html)
-- [requirejs](examples/requirejs.html)
+- [Old school](examples/old_school.html)
+- [RequireJS](examples/requirejs.html)
+- [WebWorker](examples/worker.html)
 
 ## Copyright and License
 Richard Hülsberg - [rh+github@hrdns.de](mailto:rh+github@hrdns.de) - <https://www.hrdns.de>
