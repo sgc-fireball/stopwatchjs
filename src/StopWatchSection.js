@@ -1,13 +1,27 @@
-define([
-    "StopWatch/PHPJS",
-    "StopWatch/StopWatchEvent",
-    "StopWatch/StopWatchException"
-], function (PHPJS, StopWatchEvent, StopWatchException) {
-    "use strict";
+(function (window, factory) {
 
-    if (!!window.StopWatchSection) {
-        return window.StopWatchSection;
+    if (typeof(define) == 'function' && !!define.amd) {
+        define([
+            'StopWatch/PHPJS',
+            'StopWatch/StopWatchEvent',
+            'StopWatch/StopWatchException'
+        ], factory);
+    } else if (typeof(module) == 'object' && !!module.exports) {
+        module.exports = factory(
+            require('PHPJS'),
+            require('StopWatchEvent'),
+            require('StopWatchException')
+        );
+    } else {
+        window.StopWatchSection = factory(
+            window.PHPJS,
+            window.StopWatchEvent,
+            window.StopWatchException
+        );
     }
+
+}(window, function (PHPJS, StopWatchEvent, StopWatchException) {
+    'use strict';
 
     /**
      * Stopwatch section.
@@ -175,7 +189,6 @@ define([
         return this.events;
     };
 
-    window.StopWatchSection = StopWatchSection;
-    return window.StopWatchSection;
+    return StopWatchSection;
 
-});
+}));

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>StopWatchJS</title>
+    </head>
+    <body data-stopwatch="1">
+        <h1>StopWatchJS</h1>
+        <script type="text/javascript" src="../src/PHPJS.js"></script>
+        <script type="text/javascript" src="../src/StopwatchPeriod.js"></script>
+        <script type="text/javascript" src="../src/StopWatchEvent.js"></script>
+        <script type="text/javascript" src="../src/StopWatchException.js"></script>
+        <script type="text/javascript" src="../src/StopWatchSection.js"></script>
+        <script type="text/javascript" src="../src/StopWatchViewer.js"></script>
+        <script type="text/javascript" src="../src/StopWatchExporter.js"></script>
+        <script type="text/javascript" src="../src/StopWatch.js"></script>
+        <script type="text/javascript">
+            StopWatch.start('initialisation','section');
+            StopWatch.start('R.js','loading');
+            var i = setInterval(function(){ StopWatch.lap('R.js'); },100);
+            setTimeout(function(){ clearInterval(i); StopWatch.stop('R.js'); StopWatch.stop('initialisation'); },500);
+            setTimeout(function(){ StopWatch.start('working','section'); },500);
+
+            setTimeout(function(){ StopWatch.openSection(); },550);
+            setTimeout(function(){ StopWatch.start('render','template'); },600);
+            setTimeout(function(){ StopWatch.stop('render'); },800);
+            setTimeout(function(){ StopWatch.stopSection('sub'); },900);
+
+            setTimeout(function(){ StopWatch.stop('working'); },1000);
+            setTimeout(function(){ StopWatch.getExporter().getViewer().open(); },1250);
+        </script>
+    </body>
+</html>

@@ -32,7 +32,9 @@ define(['StopWatch/StopWatch'],function(StopWatch){
 ```
 
 ## Example
-![example1.png](examples/example1.png)
+![requirejs.png](examples/example.png)
+- [old school](examples/old_school.html)
+- [requirejs](examples/requirejs.html)
 
 ## Copyright and License
 Richard Hülsberg - [rh+github@hrdns.de](mailto:rh+github@hrdns.de) - <https://www.hrdns.de>

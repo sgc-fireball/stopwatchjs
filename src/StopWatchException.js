@@ -1,9 +1,15 @@
-define(function () {
-    "use strict";
+(function (window, factory) {
 
-    if (!!window.StopWatchException) {
-        return window.StopWatchException;
+    if (typeof(define) == 'function' && !!define.amd) {
+        define(factory);
+    } else if (typeof(module) == 'object' && !!module.exports) {
+        module.exports = factory();
+    } else {
+        window.StopWatchException = factory();
     }
+
+}(window, function () {
+    'use strict';
 
     /**
      * Represents a StopWatch error.
@@ -44,7 +50,6 @@ define(function () {
         return 'StopWatchException[' + this.getCode() + '] ' + this.getMessage();
     };
 
-    window.StopWatchException = StopWatchException;
-    return window.StopWatchException;
+    return StopWatchException;
 
-});
+}));

@@ -1,41 +1,38 @@
-define(function () {
-    "use strict";
+(function (window, factory) {
 
-    window.PHPJS = window.PHPJS || {};
+    if (typeof(define) == 'function' && !!define.amd) {
+        define(factory);
+    } else if (typeof(module) == 'object' && !!module.exports) {
+        module.exports = factory();
+    } else {
+        window.PHPJS = factory();
+    }
 
-    window.PHPJS.microtime = function (get_as_float) {
-        //  discuss at: http://phpjs.org/functions/microtime/
-        // original by: Paulo Freitas
-        //   example 1: timeStamp = microtime(true);
-        //   example 1: timeStamp > 1000000000 && timeStamp < 2000000000
-        //   returns 1: true
+}(window, function () {
+    'use strict';
+
+    var PHPJS = {};
+
+    /**
+     * @see http://en.php.net/microtime
+     * @see http://phpjs.org/functions/microtime/
+     * @param {boolean} get_as_float
+     * @returns {string|number}
+     */
+    PHPJS.microtime = function (get_as_float) {
         var now = new Date().getTime() / 1000;
         var s = parseInt(now, 10);
         return (get_as_float) ? now : (Math.round((now - s) * 1000) / 1000) + ' ' + s;
     };
 
-    window.PHPJS.sprintf = function () {
-        //  discuss at: http://phpjs.org/functions/sprintf/
-        // original by: Ash Searle (http://hexmen.com/blog/)
-        // improved by: Michael White (http://getsprink.com)
-        // improved by: Jack
-        // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-        // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-        // improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-        // improved by: Dj
-        // improved by: Allidylls
-        //    input by: Paulo Freitas
-        //    input by: Brett Zamir (http://brett-zamir.me)
-        //   example 1: sprintf("%01.2f", 123.1);
-        //   returns 1: 123.10
-        //   example 2: sprintf("[%10s]", 'monkey');
-        //   returns 2: '[    monkey]'
-        //   example 3: sprintf("[%'#10s]", 'monkey');
-        //   returns 3: '[####monkey]'
-        //   example 4: sprintf("%d", 123456789012345);
-        //   returns 4: '123456789012345'
-        //   example 5: sprintf('%-03s', 'E');
-        //   returns 5: 'E00'
+    /**
+     * @see http://en.php.net/sprintf
+     * @see http://phpjs.org/functions/sprintf/
+     * @param {string} format
+     * @param {undefined|mixed} param1
+     * @returns {void|string|XML}
+     */
+    PHPJS.sprintf = function () {
 
         var regex = /%%|%(\d+\$)?([-+'#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuideEfFgG])/g;
         var a = arguments;
@@ -203,19 +200,14 @@ define(function () {
         return format.replace(regex, doFormat);
     };
 
-    window.PHPJS.uniqid = function (prefix, more_entropy) {
-        //  discuss at: http://phpjs.org/functions/uniqid/
-        // original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-        //  revised by: Kankrelune (http://www.webfaktory.info/)
-        //        note: Uses an internal counter (in php_js global) to avoid collision
-        //        test: skip
-        //   example 1: uniqid();
-        //   returns 1: 'a30285b160c14'
-        //   example 2: uniqid('foo');
-        //   returns 2: 'fooa30285b1cd361'
-        //   example 3: uniqid('bar', true);
-        //   returns 3: 'bara20285b23dfd1.31879087'
-
+    /**
+     * @see http://en.php.net/uniqid
+     * @see http://phpjs.org/functions/uniqid/
+     * @param {string} prefix
+     * @param {boolean} more_entropy
+     * @returns {string}
+     */
+    PHPJS.uniqid = function (prefix, more_entropy) {
         if (typeof prefix === 'undefined') {
             prefix = '';
         }
@@ -257,6 +249,5 @@ define(function () {
         return retId;
     };
 
-    return window.PHPJS;
-
-});
+    return PHPJS;
+}));

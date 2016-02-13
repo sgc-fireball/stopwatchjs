@@ -1,13 +1,27 @@
-define([
-    'StopWatch/PHPJS',
-    'StopWatch/StopWatchException',
-    'StopWatch/StopWatchPeriod'
-], function (PHPJS, StopWatchException, StopWatchPeriod) {
-    "use strict";
+(function (window, factory) {
 
-    if (!!window.StopWatchEvent) {
-        return window.StopWatchEvent;
+    if (typeof(define) == 'function' && !!define.amd) {
+        define([
+            'StopWatch/PHPJS',
+            'StopWatch/StopWatchException',
+            'StopWatch/StopWatchPeriod'
+        ], factory);
+    } else if (typeof(module) == 'object' && !!module.exports) {
+        module.exports = factory(
+            require('PHPJS'),
+            require('StopWatchException'),
+            require('StopWatchPeriod')
+        );
+    } else {
+        window.StopWatchEvent = factory(
+            window.PHPJS,
+            window.StopWatchException,
+            window.StopWatchPeriod
+        );
     }
+
+}(window, function (PHPJS, StopWatchException, StopWatchPeriod) {
+    'use strict';
 
     /**
      * Represents an Event managed by StopWatch.
@@ -177,7 +191,6 @@ define([
         );
     };
 
-    window.StopWatchEvent = StopWatchEvent;
-    return window.StopWatchEvent;
+    return StopWatchEvent;
 
-});
+}));

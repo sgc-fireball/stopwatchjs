@@ -1,0 +1,23 @@
+{
+  "name": "stopwatchjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sgc-fireball/stopwatchjs.git"
+  },
+  "description": "StopWatchJS is a javascript clone from Stopwatch Component",
+  "version": "0.0.1",
+  "author": "Richard Hülsberg",
+  "homepage": "https://www.hrdns.de",
+  "email": "rh+github@hrdns.de",
+  "keywords": ["stopwatch","stopwatchjs","analyse"],
+  "main": [
+    "src/PHPJS.js",
+    "src/StopWatch.js",
+    "src/StopWatchEvent.js",
+    "src/StopWatchException.js",
+    "src/StopWatchExporter.js",
+    "src/StopwatchPeriod.js",
+    "src/StopWatchSection.js",
+    "src/StopWatchViewer.js"
+  ]
+}

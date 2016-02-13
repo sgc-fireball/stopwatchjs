@@ -1,13 +1,27 @@
-define([
-    "StopWatch/PHPJS",
-    "StopWatch/StopWatch",
-    "StopWatch/StopWatchViewer"
-], function (PHPJS, StopWatch, StopWatchViewer) {
-    "use strict";
+(function (window, factory) {
 
-    if (!!window.StopWatchExporter) {
-        return window.StopWatchExporter;
+    if (typeof(define) == 'function' && !!define.amd) {
+        define([
+            'StopWatch/PHPJS',
+            'StopWatch/StopWatch',
+            'StopWatch/StopWatchViewer'
+        ], factory);
+    } else if (typeof(module) == 'object' && !!module.exports) {
+        module.exports = factory(
+            require('PHPJS'),
+            require('StopWatch'),
+            require('StopWatchViewer')
+        );
+    } else {
+        window.StopWatchExporter = factory(
+            window.PHPJS,
+            window.StopWatch,
+            window.StopWatchViewer
+        );
     }
+
+}(window, function (PHPJS, StopWatch, StopWatchViewer) {
+    'use strict';
 
     /**
      * A helper to draw the StopWatch data.
@@ -33,12 +47,12 @@ define([
     };
 
     StopWatchExporter.prototype.getExportData = function () {
-        var index1,index2,data = {
+        var index1, index2, data = {
             "max": 0,
             "requests": this._exportSections(this.stopWatch.getOrigin(), this.stopWatch.getSections())
         };
 
-        for (index1=0;index1<data.requests.length;index1++) {
+        for (index1 = 0; index1 < data.requests.length; index1++) {
             for (index2 in data.requests[index1].events) {
                 if (!data.requests[index1].events.hasOwnProperty(index2)) {
                     continue;
@@ -99,7 +113,6 @@ define([
         return result;
     };
 
-    window.StopWatchExporter = StopWatchExporter;
-    return window.StopWatchExporter;
+    return StopWatchExporter;
 
-});
+}));

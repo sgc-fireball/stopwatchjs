@@ -1,26 +1,42 @@
-define([
-    'StopWatch/PHPJS',
-    'StopWatch/StopWatchEvent',
-    'StopWatch/StopWatchException',
-    'StopWatch/StopWatchSection',
-    'StopWatch/StopWatchExporter'
-], function (PHPJS, StopWatchEvent, StopWatchException, StopWatchSection, StopWatchExporter) {
-    "use strict";
+(function (window, factory) {
 
-    if (!!window.StopWatch) {
-        return window.StopWatch;
+    if (typeof(define) == 'function' && !!define.amd) {
+        define([
+            'StopWatch/PHPJS',
+            'StopWatch/StopWatchEvent',
+            'StopWatch/StopWatchException',
+            'StopWatch/StopWatchSection',
+            'StopWatch/StopWatchExporter'
+        ], factory);
+    } else if (typeof(module) == 'object' && !!module.exports) {
+        module.exports = factory(
+            require('PHPJS'),
+            require('StopWatchEvent'),
+            require('StopWatchException'),
+            require('StopWatchSection'),
+            require('StopWatchExporter')
+        );
+    } else {
+        window.StopWatch = factory(
+            window.PHPJS,
+            window.StopWatchEvent,
+            window.StopWatchException,
+            window.StopWatchSection,
+            window.StopWatchExporter
+        );
     }
+
+}(window, function (PHPJS, StopWatchEvent, StopWatchException, StopWatchSection, StopWatchExporter) {
+    'use strict';
 
     /**
      * StopWatch provides a way to profile code.
      *
-     * @param active
      * @constructor
      * @author Richard Hülsberg <rh@hrdns.de>
      * @see https://github.com/symfony/stopwatch
      */
-    function StopWatch(active) {
-        this.active = !!active;
+    function StopWatch() {
 
         /**
          * @type {number}
@@ -60,9 +76,6 @@ define([
      * @throws {StopWatchException} When the section to re-open is not reachable.
      */
     StopWatch.prototype.openSection = function (id) {
-        if (!this.active) {
-            return this;
-        }
 
         id = !!id ? id : null;
         var current = this.activeSections[this.activeSections.length - 1];
@@ -90,9 +103,6 @@ define([
      * @throws {StopWatchException} When there's no started section to be stopped.
      */
     StopWatch.prototype.stopSection = function (id) {
-        if (!this.active) {
-            return this;
-        }
         if (this.activeSections.length == 1) {
             throw new StopWatchException('There is no started section to stop.');
         }
@@ -109,9 +119,6 @@ define([
      * @return {StopWatchEvent|null} A StopWatchEvent instance.
      */
     StopWatch.prototype.start = function (name, category) {
-        if (!this.active) {
-            return null;
-        }
         category = !!category ? category : '';
         return this.activeSections[this.activeSections.length - 1].start(name, category);
     };
@@ -133,9 +140,6 @@ define([
      * @return {StopWatchEvent|null} A StopWatchEvent instance.
      */
     StopWatch.prototype.stop = function (name) {
-        if (!this.active) {
-            return null;
-        }
         return this.activeSections[this.activeSections.length - 1].stop(name);
     };
 
@@ -146,9 +150,6 @@ define([
      * @return {StopWatchEvent|null} A StopWatchEvent instance.
      */
     StopWatch.prototype.lap = function (name) {
-        if (!this.active) {
-            return null;
-        }
         if (!this.activeSections.length) {
             return null;
         }
@@ -163,9 +164,6 @@ define([
      * @return {StopWatchEvent|null} A StopWatchEvent instance.
      */
     StopWatch.prototype.getEvent = function (name) {
-        if (!this.active) {
-            return null;
-        }
         if (!this.activeSections.length) {
             return null;
         }
@@ -191,11 +189,6 @@ define([
         return this.exporter;
     };
 
-    StopWatch.prototype.isActive = function () {
-        return this.active;
-    };
+    return new StopWatch();
 
-    window.StopWatch = new StopWatch(!!document.body.dataset['stopwatch']);
-    return window.StopWatch;
-
-});
+}));

@@ -1,9 +1,15 @@
-define(function () {
-    "use strict";
+(function (window, factory) {
 
-    if (!!window.StopWatchPeriod) {
-        return window.StopWatchPeriod;
+    if (typeof(define) == 'function' && !!define.amd) {
+        define(factory);
+    } else if (typeof(module) == 'object' && !!module.exports) {
+        module.exports = factory();
+    } else {
+        window.StopWatchPeriod = factory();
     }
+
+}(window, function () {
+    'use strict';
 
     /**
      * Represents an Period for an Event.
@@ -46,7 +52,6 @@ define(function () {
         return this.end - this.start;
     };
 
-    window.StopWatchPeriod = StopWatchPeriod;
-    return window.StopWatchPeriod;
-
-});
+    return StopWatchPeriod;
+   
+}));
