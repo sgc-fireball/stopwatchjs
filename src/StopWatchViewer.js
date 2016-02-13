@@ -27,16 +27,17 @@
             stopWatchExporter: null,
             threshold: 0,
             space: 'auto',
-            width: 888,
+            width: 'auto',
             colors: {
-                'section': '#444',
-                'default': '#999',
-                'border': '#CCC',
-                'text': '#222',
+                'default': '#909090',
+                'section': '#404040',
                 'timer': '#66CC00',
                 'interval': '#66CC00',
                 'requests': '#FF6633',
-                'background': '#CCC'
+                'worker': '#FFF200',
+                'border': '#C0C0C0',
+                'text': '#202020',
+                'background': '#C0C0C0'
             }
         };
         for (var key in this.parameters) {
@@ -188,6 +189,9 @@
                 continue;
             }
             if (request.events[index].name == '__section__' || request.events[index].name == '__section__.child') {
+                continue;
+            }
+            if (request.events[index].duration < this.parameters.threshold) {
                 continue;
             }
             filteredEvents[index] = request.events[index];

@@ -11,6 +11,7 @@ self.addEventListener('message', function(e) {
         }
         if (!firstTime) {
             self.postMessage({'cmd':'stop','event':'working'});
+            self.postMessage({'cmd':'stop','event':'watcher'});
         }
         self.close();
     }
@@ -19,9 +20,16 @@ self.addEventListener('message', function(e) {
 interval = setInterval(function(){
     if (firstTime) {
         firstTime = false;
-        self.postMessage({'cmd':'start','event':'working','category':'worker'});
+        self.postMessage({'cmd':'start','event':'watcher','category':'interval'});
     } else {
-        self.postMessage({'cmd':'lap','event':'working'});
+        self.postMessage({'cmd':'lap','event':'watcher'});
     }
 },100);
+setTimeout(function(){
+    self.postMessage({'cmd':'start','event':'subwork','category':'timeout'});
+    setTimeout(function(){
+        self.postMessage({'cmd':'stop','event':'subwork'});
+    },50);
+},200);
 self.postMessage({'cmd':'stop','event':'setup'});
+self.postMessage({'cmd':'start','event':'working','category':'worker'});
