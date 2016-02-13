@@ -1,0 +1,18 @@
+{
+  "name": "sgc-fireball/stopwatchjs",
+  "description": "StopWatchJS is a JS clone from symfony/stopwatch.",
+  "keywords": ["javascript", "stopwatch", "library"],
+  "homepage": "https://www.hrdns.de",
+  "authors": [
+    {
+      "name": "Richard Huelsberg",
+      "email": "rh+github@hrdns.de",
+      "homepage": "https://www.hrdns.de",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "rh+github@hrdns.de"
+  },
+  "type": "library"
+}

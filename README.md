@@ -12,7 +12,9 @@ composer require sgc-fireball/stopwatchjs
 ```
 
 ### Bower
-coming soon ...
+```bash
+bower install hrdns-stopwatchjs
+```
 
 ## Usage
 ```javascript
