@@ -158,6 +158,12 @@
         return (PHPJS.microtime(true) * 1000) - this.origin;
     };
 
+    StopWatchEvent.prototype.addPeriod = function(start,end) {
+        var period = new StopWatchPeriod(start-this.origin,end-this.origin);
+        this.periods.push( period );
+        return this;
+    };
+
     /**
      * @return {string}
      */

@@ -123,6 +123,17 @@
         return this.events;
     };
 
+    StopWatchSection.prototype.addEventPeriod = function(name,category,start,end) {
+        category = !!category ? category : 'default';
+        if (!this.events[name]) {
+            var startOrigin = !isNaN(this.origin) ? this.origin : (PHPJS.microtime(true) * 1000);
+            this.events[name] = new StopWatchEvent(startOrigin,category);
+        }
+
+        this.events[name].addPeriod(start,end);
+        return this;
+    };
+
     return StopWatchSection;
 
 }));

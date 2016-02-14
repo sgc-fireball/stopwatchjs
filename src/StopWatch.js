@@ -39,20 +39,25 @@
     function StopWatch() {
 
         /**
-         * @type {number}
-         */
-        this.origin = PHPJS.microtime(true) * 1000;
-
-        /**
          * @type {StopWatchSection[]}
          * @private
          */
-        this.sections = {'main': new StopWatchSection(this.origin,'main')};
+        this.sections = {'main': new StopWatchSection(undefined,'main')};
 
         /**
          * @TODO refactor!
          */
         this.exporter = new StopWatchExporter(this);
+
+        /**
+         * @see https://www.w3.org/TR/navigation-timing/timing-overview.png
+         */
+        if (!!window.performance && !!window.performance.timing) {
+            var timing = window.performance.timing;
+            this.sections = {'main': new StopWatchSection(timing.domLoading,'main')};
+            this.sections['main'].addEventPeriod('domContentLoaded','section',timing.domContentLoaded,timing.domComplete);
+            this.sections['main'].addEventPeriod('onLoad','section',timing.loadEventStart,timing.loadEventEnd);
+        }
     }
 
     /**
@@ -61,7 +66,7 @@
      * @returns {number} Return the start time.
      */
     StopWatch.prototype.getOrigin = function () {
-        return this.origin;
+        return this.sections['main'].getOrigin();
     };
 
     /**
