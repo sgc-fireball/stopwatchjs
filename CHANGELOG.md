@@ -4,6 +4,7 @@
 - adding window.performance.timing support
     - adding domContentLoaded
     - adding onLoad
+- update example image
 
 ## 2016-02-13
 - update loading engine
