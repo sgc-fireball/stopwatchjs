@@ -10,9 +10,11 @@
         <script type="text/javascript" src="../src/StopWatchEvent.js"></script>
         <script type="text/javascript" src="../src/StopWatchException.js"></script>
         <script type="text/javascript" src="../src/StopWatchSection.js"></script>
-        <script type="text/javascript" src="../src/StopWatchViewer.js"></script>
-        <script type="text/javascript" src="../src/StopWatchExporter.js"></script>
         <script type="text/javascript" src="../src/StopWatch.js"></script>
+        <script type="text/javascript" src="../src/StopWatchExporter.js"></script>
+        <script type="text/javascript" src="../src/StopWatchExporter/SymfonyExporter.js"></script>
+        <script type="text/javascript" src="../src/StopWatchViewer.js"></script>
+        <script type="text/javascript" src="../src/StopWatchViewer/SymfonyViewer.js"></script>
         <script type="text/javascript">
             var section = null;
             StopWatch.start('initialisation','section');
@@ -27,7 +29,15 @@
             setTimeout(function(){ StopWatch.closeSection('SubProcess'); },900);
 
             setTimeout(function(){ StopWatch.stop('working'); },1000);
-            setTimeout(function(){ StopWatch.getExporter().getViewer().open(); },1250);
+            setTimeout(function(){
+                var exporter = new StopWatchSymfonyExporter();
+                exporter.setStopWatch(StopWatch);
+
+                var viewer = new StopWatchSymfonyViewer();
+                viewer.setStopWatchExporter( exporter );
+
+                viewer.open();
+            },1250);
         </script>
     </body>
 </html>

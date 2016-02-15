@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2016-02-15
+- refactor Viewer 
+- refactor Exporter
+
 ## 2016-02-14
 - adding window.performance.timing support
     - adding domContentLoaded

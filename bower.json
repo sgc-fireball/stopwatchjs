@@ -19,7 +19,9 @@
     "src/StopWatchExporter.js",
     "src/StopWatchPeriod.js",
     "src/StopWatchSection.js",
-    "src/StopWatchViewer.js"
+    "src/StopWatchViewer.js",
+    "src/StopWatchExporter/SymfonyExporter.js",
+    "src/StopWatchViewer/SymfonyViewer.js"
   ],
   "ignore": [
     "bower_components/",

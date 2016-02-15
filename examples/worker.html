@@ -13,7 +13,7 @@
                     "StopWatch": "../src"
                 }
             });
-            define('main',['StopWatch/StopWatch'],function(StopWatch){
+            define('main',['StopWatch/StopWatch','StopWatch/StopWatchExporter/SymfonyExporter','StopWatch/StopWatchViewer/SymfonyViewer'],function(StopWatch,SymfonyExporter,SymfonyViewer){
                 window.StopWatch = StopWatch;
 
                 StopWatch.start('initialisation','section');
@@ -40,7 +40,15 @@
 
                 setTimeout(function(){ StopWatch.stop('workingResult'); },1100);
 
-                setTimeout(function(){ StopWatch.getExporter().getViewer().open(); },1250);
+                setTimeout(function(){
+                    var exporter = new SymfonyExporter();
+                    exporter.setStopWatch(StopWatch);
+
+                    var viewer = new SymfonyViewer();
+                    viewer.setStopWatchExporter( exporter );
+
+                    viewer.open();
+                },1250);
             });
             require(['main']);
         </script>

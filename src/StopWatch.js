@@ -6,27 +6,24 @@
             'StopWatch/StopWatchEvent',
             'StopWatch/StopWatchException',
             'StopWatch/StopWatchSection',
-            'StopWatch/StopWatchExporter'
         ], factory);
     } else if (typeof(module) == 'object' && !!module.exports) {
         module.exports = factory(
             require('PHPJS'),
             require('StopWatchEvent'),
             require('StopWatchException'),
-            require('StopWatchSection'),
-            require('StopWatchExporter')
+            require('StopWatchSection')
         );
     } else {
         window.StopWatch = factory(
             window.PHPJS,
             window.StopWatchEvent,
             window.StopWatchException,
-            window.StopWatchSection,
-            window.StopWatchExporter
+            window.StopWatchSection
         );
     }
 
-}(window, function (PHPJS, StopWatchEvent, StopWatchException, StopWatchSection, StopWatchExporter) {
+}(window, function (PHPJS, StopWatchEvent, StopWatchException, StopWatchSection) {
     'use strict';
 
     /**
@@ -43,11 +40,6 @@
          * @private
          */
         this.sections = {'main': new StopWatchSection(undefined, 'main')};
-
-        /**
-         * @TODO refactor!
-         */
-        this.exporter = new StopWatchExporter(this);
 
         /**
          * @see https://www.w3.org/TR/navigation-timing/timing-overview.png
@@ -169,13 +161,6 @@
             throw new StopWatchException('Missing argument name.');
         }
         return this.sections['main'].stop(name);
-    };
-
-    /**
-     * @TODO refactor!
-     */
-    StopWatch.prototype.getExporter = function () {
-        return this.exporter;
     };
 
     return new StopWatch();
