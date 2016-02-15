@@ -293,15 +293,15 @@
 
         // draw horizontal lines
         keys = Object.keys(events);
-        for (index1 = 1; index1 < keys.length; index1++) {
+        for (index1 = 0; index1 < keys.length; index1++) {
             color = this.parameters.colors.border;
-            if (index1 == 1) {
+            if (index1 == 0) {
                 color = this.parameters.colors.text;
             }
             line = document.createElementNS(svg.namespaceURI, 'line');
             line.setAttribute('x1', '0');
             line.setAttribute('x2', svg.getAttribute('width'));
-            line.setAttribute('y1', (38 * index1).toString());
+            line.setAttribute('y1', (38 * (index1+1)).toString());
             line.setAttribute('y2', line.getAttribute('y1'));
             line.setAttribute('style', 'stroke:' + color + ';stroke-width:1;');
             svg.appendChild(line);
