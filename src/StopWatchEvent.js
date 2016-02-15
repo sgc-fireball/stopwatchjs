@@ -164,17 +164,6 @@
         return this;
     };
 
-    /**
-     * @return {string}
-     */
-    StopWatchEvent.prototype.toString = function () {
-        return PHPJS.sprintf(
-            '%s: %d ms',
-            this.getCategory(),
-            this.getDuration()
-        );
-    };
-
     return StopWatchEvent;
 
 }));

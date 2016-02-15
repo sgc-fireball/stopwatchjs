@@ -5,7 +5,7 @@
             'StopWatch/PHPJS',
             'StopWatch/StopWatchEvent',
             'StopWatch/StopWatchException',
-            'StopWatch/StopWatchSection',
+            'StopWatch/StopWatchSection'
         ], factory);
     } else if (typeof(module) == 'object' && !!module.exports) {
         module.exports = factory(
@@ -44,18 +44,33 @@
         /**
          * @see https://www.w3.org/TR/navigation-timing/timing-overview.png
          */
-        if (!!window.performance && !!window.performance.timing) {
-            var timing = window.performance.timing;
-            if (timing.domLoading) {
-                this.sections = {'main': new StopWatchSection(timing.domLoading, 'main')};
-                if (timing.domContentLoaded && timing.domComplete) {
-                    this.sections['main'].addEventPeriod('domContentLoaded', 'section', timing.domContentLoaded, timing.domComplete);
-                    if (timing.loadEventStart && timing.loadEventEnd) {
-                        this.sections['main'].addEventPeriod('onLoad', 'section', timing.loadEventStart, timing.loadEventEnd);
-                    }
-                }
+        this.sections = {'main': new StopWatchSection(window.performance.timing.domainLookupStart, 'main')};
+        this.sections['main'].addEventPeriod('System','section');
+        var self = this;
+        var interval = setInterval(function(){
+            if (!window.performance.timing.loadEventEnd) {
+                return;
             }
-        }
+            self.sections['main'].addEventPeriod(
+                '__section__.child',
+                'system',
+                window.performance.timing.domainLookupStart,
+                window.performance.timing.loadEventEnd
+            );
+            self.sections['main'].addEventPeriod(
+                '__section__',
+                'system',
+                window.performance.timing.domainLookupStart,
+                window.performance.timing.loadEventEnd
+            );
+            self.sections['main'].addEventPeriod(
+                'System',
+                'section',
+                window.performance.timing.domainLookupStart,
+                window.performance.timing.loadEventEnd
+            );
+            clearInterval(interval);
+        });
     }
 
     /**

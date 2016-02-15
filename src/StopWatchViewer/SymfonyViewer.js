@@ -342,7 +342,7 @@
             'fill: ' + this.parameters.colors.text + ';' +
             'font-size: 12px; font-family: sans-serif;'
         );
-        tspan.innerHTML = event.name + ' ' + event.duration.toString() + ' ms.';
+        tspan.innerHTML = event.name + ' ' + (parseInt(event.duration*100)/100).toString() + ' ms.';
         text.appendChild(tspan);
         svg.appendChild(text);
 

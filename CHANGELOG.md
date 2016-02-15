@@ -3,6 +3,7 @@
 ## 2016-02-15
 - refactor Viewer 
 - refactor Exporter
+- increased the accuracy
 
 ## 2016-02-14
 - adding window.performance.timing support

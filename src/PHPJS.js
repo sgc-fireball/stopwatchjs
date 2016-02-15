@@ -16,13 +16,17 @@
     /**
      * @see http://en.php.net/microtime
      * @see http://phpjs.org/functions/microtime/
+     * @author Update by Richard Huelsberg <rh+github@hrdns.de>
      * @param {boolean} get_as_float
      * @returns {string|number}
      */
     PHPJS.microtime = function (get_as_float) {
-        var now = new Date().getTime() / 1000;
+        var now = (window.performance.timing.navigationStart+window.performance.now())/1000;
+        if (get_as_float) {
+            return now;
+        }
         var s = parseInt(now, 10);
-        return (get_as_float) ? now : (Math.round((now - s) * 1000) / 1000) + ' ' + s;
+        return (Math.round((now - s) * 1000) / 1000) + ' ' + s;
     };
 
     /**

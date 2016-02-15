@@ -129,8 +129,9 @@
             var startOrigin = !isNaN(this.origin) ? this.origin : (PHPJS.microtime(true) * 1000);
             this.events[name] = new StopWatchEvent(startOrigin,category);
         }
-
-        this.events[name].addPeriod(start,end);
+        if (typeof(start)!=='undefined' && typeof(end)!=='undefined') {
+            this.events[name].addPeriod(start,end);
+        }
         return this;
     };
 
