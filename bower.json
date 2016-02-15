@@ -17,7 +17,7 @@
     "src/StopWatchEvent.js",
     "src/StopWatchException.js",
     "src/StopWatchExporter.js",
-    "src/StopwatchPeriod.js",
+    "src/StopWatchPeriod.js",
     "src/StopWatchSection.js",
     "src/StopWatchViewer.js"
   ],
