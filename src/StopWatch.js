@@ -42,7 +42,7 @@
          * @type {StopWatchSection[]}
          * @private
          */
-        this.sections = {'main': new StopWatchSection(undefined,'main')};
+        this.sections = {'main': new StopWatchSection(undefined, 'main')};
 
         /**
          * @TODO refactor!
@@ -55,9 +55,13 @@
         if (!!window.performance && !!window.performance.timing) {
             var timing = window.performance.timing;
             if (timing.domLoading) {
-                this.sections = {'main': new StopWatchSection(timing.domLoading,'main')};
-                this.sections['main'].addEventPeriod('domContentLoaded','section',timing.domContentLoaded,timing.domComplete);
-                this.sections['main'].addEventPeriod('onLoad','section',timing.loadEventStart,timing.loadEventEnd);
+                this.sections = {'main': new StopWatchSection(timing.domLoading, 'main')};
+                if (timing.domContentLoaded && timing.domComplete) {
+                    this.sections['main'].addEventPeriod('domContentLoaded', 'section', timing.domContentLoaded, timing.domComplete);
+                    if (timing.loadEventStart && timing.loadEventEnd) {
+                        this.sections['main'].addEventPeriod('onLoad', 'section', timing.loadEventStart, timing.loadEventEnd);
+                    }
+                }
             }
         }
     }
@@ -94,8 +98,8 @@
             throw new StopWatchException('Missing argument id.');
         }
         this.sections['main'].start('__section__.child', 'section');
-        this.sections[id] = !!this.sections[id] ? this.sections[id] : new StopWatchSection(PHPJS.microtime(true)*1000,id);
-        this.sections[id].start('__section__','default');
+        this.sections[id] = !!this.sections[id] ? this.sections[id] : new StopWatchSection(PHPJS.microtime(true) * 1000, id);
+        this.sections[id].start('__section__', 'default');
         return this.sections[id];
     };
 
