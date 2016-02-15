@@ -54,9 +54,11 @@
          */
         if (!!window.performance && !!window.performance.timing) {
             var timing = window.performance.timing;
-            this.sections = {'main': new StopWatchSection(timing.domLoading,'main')};
-            this.sections['main'].addEventPeriod('domContentLoaded','section',timing.domContentLoaded,timing.domComplete);
-            this.sections['main'].addEventPeriod('onLoad','section',timing.loadEventStart,timing.loadEventEnd);
+            if (timing.domLoading) {
+                this.sections = {'main': new StopWatchSection(timing.domLoading,'main')};
+                this.sections['main'].addEventPeriod('domContentLoaded','section',timing.domContentLoaded,timing.domComplete);
+                this.sections['main'].addEventPeriod('onLoad','section',timing.loadEventStart,timing.loadEventEnd);
+            }
         }
     }
 
