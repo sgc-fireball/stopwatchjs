@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2016-02-16
+- implement default support for requirejs
+
 ## 2016-02-15
 - refactor Viewer 
 - refactor Exporter

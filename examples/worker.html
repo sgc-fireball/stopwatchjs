@@ -6,7 +6,7 @@
     <body data-stopwatch="1">
         <h1>StopWatchJS</h1>
         <script type="text/javascript"
-                src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.min.js"></script>
+                src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.min.js"></script>
         <script type="text/javascript">
             require.config({
                 paths: {
@@ -14,7 +14,6 @@
                 }
             });
             define('main',['StopWatch/StopWatch','StopWatch/StopWatchExporter/SymfonyExporter','StopWatch/StopWatchViewer/SymfonyViewer'],function(StopWatch,SymfonyExporter,SymfonyViewer){
-                window.StopWatch = StopWatch;
 
                 StopWatch.start('initialisation','section');
                 var worker = new Worker('./worker/worker1.js');

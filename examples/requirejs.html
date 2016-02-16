@@ -6,38 +6,43 @@
     <body data-stopwatch="1">
         <h1>StopWatchJS</h1>
         <script type="text/javascript"
-                src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.min.js"></script>
+                src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.js"></script>
         <script type="text/javascript">
             require.config({
                 paths: {
                     "StopWatch": "../src"
                 }
             });
-            define('main',['StopWatch/StopWatch','StopWatch/StopWatchExporter/SymfonyExporter','StopWatch/StopWatchViewer/SymfonyViewer'],function(StopWatch,SymfonyExporter,SymfonyViewer){
-                window.StopWatch = StopWatch;
+            define('main',['StopWatch/StopWatch'],function(StopWatch){
 
-                var section = null;
-                StopWatch.start('initialisation','section');
-                StopWatch.start('R.js','loading');
-                var i = setInterval(function(){ StopWatch.lap('R.js'); },100);
-                setTimeout(function(){ clearInterval(i); StopWatch.stop('R.js'); StopWatch.stop('initialisation'); },500);
-                setTimeout(function(){ StopWatch.start('working','section'); },500);
+                require([
+                    'StopWatch/StopWatchExporter/SymfonyExporter',
+                    'StopWatch/StopWatchViewer/SymfonyViewer'
+                ],function(SymfonyExporter,SymfonyViewer) {
 
-                setTimeout(function(){ section = StopWatch.openSection('SubProcess'); },550);
-                setTimeout(function(){ section.start('render','template'); },600);
-                setTimeout(function(){ section.stop('render'); },800);
-                setTimeout(function(){ StopWatch.closeSection(section); },900);
+                    var section = null;
+                    StopWatch.start('initialisation','section');
+                    StopWatch.start('R.js','loading');
+                    var i = setInterval(function(){ StopWatch.lap('R.js'); },100);
+                    setTimeout(function(){ clearInterval(i); StopWatch.stop('R.js'); StopWatch.stop('initialisation'); },500);
+                    setTimeout(function(){ StopWatch.start('working','section'); },500);
 
-                setTimeout(function(){ StopWatch.stop('working'); },1000);
-                setTimeout(function(){
-                    var exporter = new SymfonyExporter();
-                    exporter.setStopWatch(StopWatch);
+                    setTimeout(function(){ section = StopWatch.openSection('SubProcess'); },550);
+                    setTimeout(function(){ section.start('render','template'); },600);
+                    setTimeout(function(){ section.stop('render'); },800);
+                    setTimeout(function(){ StopWatch.closeSection(section); },900);
 
-                    var viewer = new SymfonyViewer();
-                    viewer.setStopWatchExporter( exporter );
+                    setTimeout(function(){ StopWatch.stop('working'); },1000);
+                    setTimeout(function(){
+                        var exporter = new SymfonyExporter();
+                        exporter.setStopWatch(StopWatch);
 
-                    viewer.open();
-                },1250);
+                        var viewer = new SymfonyViewer();
+                        viewer.setStopWatchExporter( exporter );
+
+                        viewer.open();
+                    },1250);
+                });
             });
             require(['main']);
         </script>

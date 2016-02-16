@@ -178,6 +178,25 @@
         return this.sections['main'].stop(name);
     };
 
-    return new StopWatch();
+    var _StopWatch = new StopWatch();
+
+    /**
+     * implement requirejs basic support
+     */
+    if (typeof(define) == 'function' && !!define.amd) {
+        require.config({
+            onNodeCreated: function(node, config, moduleName, url){
+                _StopWatch.start('requirejs: '+moduleName,'requests');
+                node.addEventListener('error',function(){
+                    _StopWatch.stop('requirejs: '+moduleName);
+                },false);
+                node.addEventListener('load',function(){
+                    _StopWatch.stop('requirejs: '+moduleName);
+                },false);
+            }
+        });
+    }
+
+    return _StopWatch;
 
 }));
