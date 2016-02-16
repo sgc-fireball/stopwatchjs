@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>StopWatchJS</title>
+    </head>
+    <body data-stopwatch="1">
+        <h1>StopWatchJS</h1>
+        <script type="text/javascript"
+                src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.js"></script>
+        <script type="text/javascript">
+            require.config({
+                paths: {
+                    "StopWatch": "../src"
+                }
+            });
+            define('main',['StopWatch/StopWatch'],function(StopWatch){
+                StopWatch.start('endless','interval');
+                require([
+                    'StopWatch/StopWatchExporter/SymfonyExporter',
+                    'StopWatch/StopWatchViewer/SymfonyViewer'
+                ],function(SymfonyExporter,SymfonyViewer) {
+                    window.viewer = (new SymfonyViewer({update:1})).setStopWatchExporter( (new SymfonyExporter()).setStopWatch(StopWatch));
+                    window.viewer.open();
+                    window.openStopWatchViewer = function(){window.viewer.open();};
+                });
+            });
+            require(['main']);
+        </script>
+    </body>
+</html>

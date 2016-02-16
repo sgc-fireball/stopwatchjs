@@ -2,6 +2,7 @@
 
 ## 2016-02-16
 - implement default support for requirejs
+- implement auto update view
 
 ## 2016-02-15
 - refactor Viewer 

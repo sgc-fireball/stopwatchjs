@@ -71,9 +71,17 @@
      * @return {StopWatchPeriod[]} An array of StopWatchPeriod instances.
      */
     StopWatchEvent.prototype.getPeriods = function () {
-        return this.periods;
+        var periods = [],index,now = this.getNow();
+        for (index=0;index<this.periods.length;index++) {
+            if (this.periods.hasOwnProperty(index)){
+                periods.push(this.periods[index]);
+            }
+        }
+        for (index=0;index<this.started.length;index++) {
+            periods.push(new StopWatchPeriod(this.started[index], now));
+        }
+        return periods;
     };
-
 
     /**
      * Starts a new event period.
@@ -115,7 +123,13 @@
      * @return {number} The time (in milliseconds).
      */
     StopWatchEvent.prototype.getStartTime = function () {
-        return !!this.periods[0] ? this.periods[0].getStartTime() : 0;
+        if (!!this.periods[0]) {
+            return this.periods[0].getStartTime();
+        }
+        if (!!this.started[0]) {
+            return this.started[0];
+        }
+        return 0;
     };
 
     /**
@@ -124,6 +138,9 @@
      * @return {number} The time (in milliseconds).
      */
     StopWatchEvent.prototype.getEndTime = function () {
+        if (this.started.length) {
+            return this.getNow();
+        }
         var length = this.periods.length;
         return !!length ? this.periods[length - 1].getEndTime() : 0;
     };
@@ -134,17 +151,12 @@
      * @return {number} The duration (in milliseconds).
      */
     StopWatchEvent.prototype.getDuration = function () {
-        var _index = 0;
-        var periods = this.periods;
-        var _stopped = periods.length;
-        var _left = this.started.length - _stopped;
-        for (var i = 0; i < _left; i++) {
-            _index = _stopped + i;
-            periods.push(new StopWatchPeriod(this.started[_index], this.getNow()));
+        var _index,now = this.getNow(),_total = 0;
+        for (_index=0;_index<this.periods.length;_index++) {
+            _total += this.periods[_index].getDuration();
         }
-        var _total = 0;
-        for (_index=0;_index<periods.length;_index++) {
-            _total += periods[_index].getDuration();
+        for (_index=0;_index<this.started.length;_index++) {
+            _total += (new StopWatchPeriod(this.started[_index], now)).getDuration();
         }
         return _total;
     };

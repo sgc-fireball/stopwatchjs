@@ -30,6 +30,7 @@
         this.renderData = {};
 
         this.parameters = {
+            update: 0,
             threshold: 0,
             space: 'auto',
             width: 'auto',
@@ -145,6 +146,10 @@
     };
 
     SymfonyViewer.prototype._render = function () {
+        if (this.container.style.display != 'block') {
+            return;
+        }
+
         this.container.innerHTML = '<div style="overflow-x:auto;"></div>';
         this.renderData = this.stopWatchExporter.getExportData();
 
@@ -165,6 +170,11 @@
         var self = this;
         requestAnimationFrame(function () {
             self._fixTextPosition();
+            if (self.parameters.update) {
+                requestAnimationFrame(function () {
+                    self._render();
+                });
+            }
         });
     };
 
