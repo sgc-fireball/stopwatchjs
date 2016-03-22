@@ -34,7 +34,7 @@
      */
     function StopWatchEvent(origin, category) {
         this.origin = origin;
-        this.categpry = !!category ? category : 'default';
+        this.category = !!category ? category : 'default';
 
         /**
          * @type {StopWatchPeriod[]}
@@ -62,7 +62,7 @@
      * @return {string} The category
      */
     StopWatchEvent.prototype.getCategory = function () {
-        return this.categpry;
+        return this.category;
     };
 
     /**
@@ -162,6 +162,21 @@
     };
 
     /**
+     * Gets the max memory usage of all periods.
+     *
+     * @return {number} The memory usage (in bytes)
+     */
+    StopWatchEvent.prototype.getMemory = function () {
+        var _index,memory = 0;
+        for (_index=0;_index<this.periods.length;_index++) {
+            if (memory < this.periods[_index].getMemory()) {
+                memory = this.periods[_index].getMemory();
+            }
+        }
+        return memory;
+    };
+
+    /**
      * Return the current time relative to origin.
      *
      * @return {number} Time in ms.
@@ -170,8 +185,8 @@
         return (PHPJS.microtime(true) * 1000) - this.origin;
     };
 
-    StopWatchEvent.prototype.addPeriod = function(start,end) {
-        var period = new StopWatchPeriod(start-this.origin,end-this.origin);
+    StopWatchEvent.prototype.addPeriod = function(start,end,memory) {
+        var period = new StopWatchPeriod(start-this.origin,end-this.origin,memory);
         this.periods.push( period );
         return this;
     };

@@ -123,14 +123,14 @@
         return this.events;
     };
 
-    StopWatchSection.prototype.addEventPeriod = function(name,category,start,end) {
+    StopWatchSection.prototype.addEventPeriod = function(name,category,start,end,memory) {
         category = !!category ? category : 'default';
         if (!this.events[name]) {
             var startOrigin = !isNaN(this.origin) ? this.origin : (PHPJS.microtime(true) * 1000);
             this.events[name] = new StopWatchEvent(startOrigin,category);
         }
         if (typeof(start)!=='undefined' && typeof(end)!=='undefined') {
-            this.events[name].addPeriod(start,end);
+            this.events[name].addPeriod(start,end,memory);
         }
         return this;
     };

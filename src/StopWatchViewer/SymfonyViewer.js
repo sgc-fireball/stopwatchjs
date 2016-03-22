@@ -42,9 +42,11 @@
                 'requests': '#FF6633',
                 'worker': '#FFF200',
                 'border': '#C0C0C0',
+                'memory': '#EFEFEF',
                 'text': '#202020',
                 'background': '#C0C0C0'
-            }
+            },
+            viewSystem: 1
         };
         for (var key in this.parameters) {
             if (!this.parameters.hasOwnProperty(key)) {
@@ -213,6 +215,11 @@
             if (request.events[index].duration < this.parameters.threshold) {
                 continue;
             }
+            if ( !this.parameters.viewSystem ) {
+                if (request.events[index].category == 'section' && request.events[index].name.indexOf('System.')===0) {
+                    continue;
+                }
+            }
             filteredEvents[index] = request.events[index];
         }
 
@@ -250,6 +257,10 @@
         svg.style.display = 'block';
         svg.style.paddingBottom = '5px';
 
+        if (request.id == 'main') {
+            this._drawMemoryStats(svg);
+        }
+
         var text = document.createElementNS(svg.namespaceURI, 'text');
         text.setAttribute('x', (this.parameters.space + 3).toString());
         text.setAttribute('y', 27);
@@ -269,6 +280,31 @@
         }
         div.appendChild(svg);
         this.container.appendChild(div);
+    };
+
+    SymfonyViewer.prototype._drawMemoryStats = function (svg) {
+        var ratio = parseFloat(svg.getAttribute('data-ratio')),
+            offset = parseInt(svg.getAttribute('data-offset')),
+            index, x,height;
+
+        var pathD = 'M0 38';
+        for (index in this.renderData.memory) {
+            if (!this.renderData.memory.hasOwnProperty(index)) {
+                continue;
+            }
+            x = parseInt(this.parameters.space + (offset + this.renderData.memory[index].time) * ratio);
+            if ( x > svg.getAttribute('width') ) {
+                break;
+            }
+            height = 38 - parseInt( this.renderData.memory[index].used / this.renderData.memory[index].peak * 38 );
+            pathD += ' L'+(x).toString()+' '+(height).toString();
+        }
+        pathD += ' L'+(svg.getAttribute('width')+10).toString()+' '+height.toString();
+        pathD += ' L0 38';
+        var path = document.createElementNS(svg.namespaceURI, 'path');
+        path.setAttribute('fill', this.parameters.colors.memory);
+        path.setAttribute('d', pathD);
+        svg.appendChild(path);
     };
 
     SymfonyViewer.prototype._drawBackground = function (svg, events) {
@@ -352,7 +388,11 @@
             'fill: ' + this.parameters.colors.text + ';' +
             'font-size: 12px; font-family: sans-serif;'
         );
-        tspan.innerHTML = event.name + ' ' + (parseInt(event.duration*100)/100).toString() + ' ms.';
+        var duration = parseInt(event.duration*100)/100;
+        var memory = parseInt(event.memory/1024*100)/100;
+        tspan.innerHTML = event.name;
+        tspan.innerHTML += ' ' + duration.toString() + ' ms.';
+        tspan.innerHTML += ' ' + memory.toString() + ' kb.';
         text.appendChild(tspan);
         svg.appendChild(text);
 

@@ -11,6 +11,8 @@
 }(window, function () {
     'use strict';
 
+    var __globalWarning = false;
+
     /**
      * Represents an Period for an Event.
      *
@@ -20,9 +22,17 @@
      * @author Richard Hülsberg <rh@hrdns.de>
      * @see https://github.com/symfony/stopwatch
      */
-    function StopWatchPeriod(start, end) {
+    function StopWatchPeriod(start, end, memory) {
         this.start = start || 0.0;
         this.end = end || 0.0;
+
+        if (!!memory) {
+            this.memory = memory;
+        } else if (!!window.performance && !!window.performance.memory && !!window.performance.memory.usedJSHeapSize) {
+            this.memory = window.performance.memory.usedJSHeapSize;
+        } else {
+            this.memory = 0;
+        }
     }
 
     /**
@@ -52,6 +62,15 @@
         return this.end - this.start;
     };
 
+    /**
+     * Gets the memoty usage.
+     *
+     * @returns {number} The memory size (in bytes).
+     */
+    StopWatchPeriod.prototype.getMemory = function () {
+        return this.memory;
+    };
+
     return StopWatchPeriod;
-   
+
 }));

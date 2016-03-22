@@ -29,7 +29,8 @@
     SymfonyExporter.prototype.getExportData = function () {
         var index1, index2, data = {
             "max": 0,
-            "requests": this._exportSections(this.stopWatch.getOrigin(), this.stopWatch.getSections())
+            "requests": this._exportSections(this.stopWatch.getOrigin(), this.stopWatch.getSections()),
+            "memory": this._exportMemory(this.stopWatch.getOrigin(),this.stopWatch.getMemoryStats())
         };
 
         for (index1 = 0; index1 < data.requests.length; index1++) {
@@ -43,6 +44,22 @@
             }
         }
         return data;
+    };
+
+    SymfonyExporter.prototype._exportMemory = function (origin, memory) {
+        var result = [],index;
+        for (index in memory.logs) {
+            if (!memory.logs.hasOwnProperty(index)) {
+                continue;
+            }
+            result.push({
+                time: memory.logs[index].time - origin,
+                peak: memory.peak,
+                total: memory.total,
+                used: memory.logs[index].used
+            });
+        }
+        return result;
     };
 
     SymfonyExporter.prototype._exportSections = function (origin, sections) {
@@ -75,6 +92,7 @@
                 "starttime": event.getStartTime(),
                 "endtime": event.getEndTime(),
                 "duration": event.getDuration(),
+                "memory": event.getMemory(),
                 "periods": this._exportPeriods(origin, event.getPeriods())
             });
         }

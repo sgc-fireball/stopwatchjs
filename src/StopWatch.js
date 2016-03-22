@@ -36,6 +36,15 @@
     function StopWatch() {
 
         /**
+         * @type {Array}
+         */
+        this.memoryStats = {
+            total: 0,
+            peak: 0,
+            logs: []
+        };
+
+        /**
          * @type {StopWatchSection[]}
          * @private
          */
@@ -45,32 +54,93 @@
          * @see https://www.w3.org/TR/navigation-timing/timing-overview.png
          */
         this.sections = {'main': new StopWatchSection(window.performance.timing.domainLookupStart, 'main')};
-        this.sections['main'].addEventPeriod('System','section');
+
+        this.sections['main'].addEventPeriod('System.DNS','section');
+        this.sections['main'].addEventPeriod('System.TCP','section');
+        this.sections['main'].addEventPeriod('System.Request','section');
+        this.sections['main'].addEventPeriod('System.Response','section');
+        this.sections['main'].addEventPeriod('System.DomLoaded','section');
+        this.sections['main'].addEventPeriod('System.DomLoaded.Event','section');
+        this.sections['main'].addEventPeriod('System.DomComplete','section');
+        this.sections['main'].addEventPeriod('System.LoadEvent','section');
+
         var self = this;
         var interval = setInterval(function(){
             if (!window.performance.timing.loadEventEnd) {
                 return;
             }
-            self.sections['main'].addEventPeriod(
-                '__section__.child',
-                'system',
+            self.sections['main'].addEventPeriod('__section__.child','system',
                 window.performance.timing.domainLookupStart,
-                window.performance.timing.loadEventEnd
+                window.performance.timing.loadEventEnd,
+                1
             );
-            self.sections['main'].addEventPeriod(
-                '__section__',
-                'system',
+            self.sections['main'].addEventPeriod('__section__','system',
                 window.performance.timing.domainLookupStart,
-                window.performance.timing.loadEventEnd
+                window.performance.timing.loadEventEnd,
+                1
             );
-            self.sections['main'].addEventPeriod(
-                'System',
-                'section',
+
+            self.sections['main'].addEventPeriod('System.DNS','section',
                 window.performance.timing.domainLookupStart,
-                window.performance.timing.loadEventEnd
+                window.performance.timing.domainLookupEnd,
+                1
+            );
+            self.sections['main'].addEventPeriod('System.TCP','section',
+                window.performance.timing.connectStart,
+                window.performance.timing.connectEnd,
+                1
+            );
+            self.sections['main'].addEventPeriod('System.Request','section',
+                window.performance.timing.requestStart,
+                window.performance.timing.responseStart,
+                1
+            );
+            self.sections['main'].addEventPeriod('System.Response','section',
+                window.performance.timing.responseStart,
+                window.performance.timing.responseEnd,
+                1
+            );
+            self.sections['main'].addEventPeriod('System.DomLoaded','section',
+                window.performance.timing.domLoading,
+                window.performance.timing.domContentLoadedEventStart,
+                1
+            );
+            self.sections['main'].addEventPeriod('System.DomLoaded.Event','section',
+                window.performance.timing.domContentLoadedEventStart,
+                window.performance.timing.domContentLoadedEventEnd,
+                1
+            );
+            self.sections['main'].addEventPeriod('System.DomComplete','section',
+                window.performance.timing.domContentLoadedEventEnd,
+                window.performance.timing.domComplete,
+                1
+            );
+            self.sections['main'].addEventPeriod('System.LoadEvent','section',
+                window.performance.timing.loadEventStart,
+                window.performance.timing.loadEventEnd,
+                1
             );
             clearInterval(interval);
         });
+
+        if ( !!window.performance && !!window.performance.memory && !!window.performance.memory.usedJSHeapSize) {
+            this.memoryStats.total = window.performance.memory.jsHeapSizeLimit;
+            var maxLength = 30*60; // ~ 30 seconds
+            var trackMemory = function(){
+                if (self.memoryStats.logs.length>=maxLength) {
+                    self.memoryStats.logs = self.memoryStats.logs.slice(self.memoryStats.logs.length-maxLength-1,maxLength);
+                }
+                if ( self.memoryStats.peak < window.performance.memory.usedJSHeapSize ) {
+                    self.memoryStats.peak = window.performance.memory.usedJSHeapSize;
+                }
+                self.memoryStats.logs.push({
+                    used: window.performance.memory.usedJSHeapSize,
+                    time: parseInt( PHPJS.microtime(true)*1000 )
+                });
+                requestAnimationFrame(trackMemory);
+            };
+            trackMemory();
+        }
     }
 
     /**
@@ -176,6 +246,10 @@
             throw new StopWatchException('Missing argument name.');
         }
         return this.sections['main'].stop(name);
+    };
+
+    StopWatch.prototype.getMemoryStats = function() {
+        return this.memoryStats;
     };
 
     var _StopWatch = new StopWatch();

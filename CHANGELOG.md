@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2016-03-22
+- implement memory tracking (max. last 30 seconds)
+- implement memory max. information on periods
+- extends system timings
+    - can be disabled by SymfonyViewer configuration ```viewSystem```
+
 ## 2016-02-16
 - implement default support for requirejs
 - implement auto update view
