@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2016-05-17
+- implement jQuery Ajax support
+- extends internal timings
+    - can be disabled by SymfonyViewer configuration ```viewInternal```
+
 ## 2016-03-22
 - implement memory tracking (max. last 30 seconds)
 - implement memory max. information on periods

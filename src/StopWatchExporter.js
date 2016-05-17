@@ -26,6 +26,7 @@
      */
     function StopWatchExporter() {
         this.stopWatch = null;
+        this.options = {};
     }
 
     StopWatchExporter.prototype.setStopWatch = function (StopWatch) {
@@ -33,7 +34,12 @@
         return this;
     };
 
-    StopWatchExporter.prototype.getExportData = function () {
+    StopWatchExporter.prototype.getStopWatch = function () {
+        return this.stopWatch;
+    };
+
+    StopWatchExporter.prototype.getExportData = function (options) {
+        this.options = !!options ? options : {};
         throw new StopWatchException('Abstract method getExportData of StopWatchExporter.');
     };
 

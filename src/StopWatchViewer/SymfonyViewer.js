@@ -32,6 +32,7 @@
         this.parameters = {
             update: 0,
             threshold: 0,
+            timeLimit: 0,
             space: 'auto',
             width: 'auto',
             colors: {
@@ -46,7 +47,8 @@
                 'text': '#202020',
                 'background': '#C0C0C0'
             },
-            viewSystem: 1
+            viewSystem: 1,
+            viewInternal: 1
         };
         for (var key in this.parameters) {
             if (!this.parameters.hasOwnProperty(key)) {
@@ -152,8 +154,11 @@
             return;
         }
 
+        this.stopWatchExporter.getStopWatch().start('SymfonyViewer','internal');
         this.container.innerHTML = '<div style="overflow-x:auto;"></div>';
-        this.renderData = this.stopWatchExporter.getExportData();
+        this.renderData = this.stopWatchExporter.getExportData({
+            timeLimit: this.parameters.timeLimit
+        });
 
         if (this.parameters.width == 'auto') {
             this.parameters.width = this.container.querySelector('div').clientWidth - 1;
@@ -166,9 +171,13 @@
 
         var ratio = (this.parameters.width - this.parameters.space * 2) / this.renderData.max;
         for (var index = 0; index < this.renderData.requests.length; index++) {
-            this._renderRequest(ratio, this.renderData.requests[index]);
+            this._renderRequest({
+                ratio: ratio,
+                request: this.renderData.requests[index]
+            });
         }
 
+        this.stopWatchExporter.getStopWatch().stop('SymfonyViewer','internal');
         var self = this;
         requestAnimationFrame(function () {
             self._fixTextPosition();
@@ -181,6 +190,7 @@
     };
 
     SymfonyViewer.prototype._fixTextPosition = function () {
+        this.stopWatchExporter.getStopWatch().start('SymfonyViewer','internal');
         var svgs = this.container.querySelectorAll('svg');
         for (var index1 in svgs) {
             if (!svgs.hasOwnProperty(index1)) {
@@ -200,9 +210,12 @@
                 }
             }
         }
+        this.stopWatchExporter.getStopWatch().stop('SymfonyViewer','internal');
     };
 
-    SymfonyViewer.prototype._renderRequest = function (ratio, request) {
+    SymfonyViewer.prototype._renderRequest = function (data) {
+        var ratio = data.ratio || 1;
+        var request = data.request || {};
 
         var index, filteredEvents = {};
         for (index in request.events) {
@@ -217,6 +230,11 @@
             }
             if ( !this.parameters.viewSystem ) {
                 if (request.events[index].category == 'section' && request.events[index].name.indexOf('System.')===0) {
+                    continue;
+                }
+            }
+            if ( !this.parameters.viewInternal ) {
+                if (request.events[index].category == 'internal') {
                     continue;
                 }
             }
@@ -391,8 +409,18 @@
         var duration = parseInt(event.duration*100)/100;
         var memory = parseInt(event.memory/1024*100)/100;
         tspan.innerHTML = event.name;
-        tspan.innerHTML += ' ' + duration.toString() + ' ms.';
-        tspan.innerHTML += ' ' + memory.toString() + ' kb.';
+        var durationUnit = 'ms';
+        if (duration > 1000) {
+            durationUnit = 's';
+            duration = parseInt(event.duration/1000*100)/100;
+        }
+        var memoryUnit = 'KB';
+        if ( memory > 1024 ) {
+            memoryUnit = 'MB';
+            memory = parseInt(event.memory/1024/1024*100)/100;
+        }
+        tspan.innerHTML += ' ' + duration.toString() + ' '+durationUnit+'.';
+        tspan.innerHTML += ' ' + memory.toString() + ' '+memoryUnit+'.';
         text.appendChild(tspan);
         svg.appendChild(text);
 

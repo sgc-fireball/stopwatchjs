@@ -14,12 +14,20 @@
                 }
             });
             define('main',['StopWatch/StopWatch'],function(StopWatch){
-                StopWatch.start('endless','interval');
+                StopWatch.start('endless1','interval');
+
+                setInterval(function(){
+                    StopWatch.start('endless2','timeout');
+                    setTimeout(function(){
+                        StopWatch.stop('endless2');
+                    },100);
+                },1000);
+
                 require([
                     'StopWatch/StopWatchExporter/SymfonyExporter',
                     'StopWatch/StopWatchViewer/SymfonyViewer'
                 ],function(SymfonyExporter,SymfonyViewer) {
-                    window.viewer = (new SymfonyViewer({update:1})).setStopWatchExporter( (new SymfonyExporter()).setStopWatch(StopWatch));
+                    window.viewer = (new SymfonyViewer({update:1,timeLimit:9999})).setStopWatchExporter( (new SymfonyExporter()).setStopWatch(StopWatch));
                     window.viewer.open();
                     window.openStopWatchViewer = function(){window.viewer.open();};
                 });

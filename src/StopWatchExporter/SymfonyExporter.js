@@ -1,16 +1,23 @@
 (function (window, factory) {
 
     if (typeof(define) == 'function' && !!define.amd) {
-        define(['StopWatch/StopWatchExporter'], factory);
+        define([
+            'StopWatch/StopWatchExporter',
+            'StopWatch/PHPJS'
+        ], factory);
     } else if (typeof(module) == 'object' && !!module.exports) {
-        module.exports = factory(require('StopWatchExporter'));
+        module.exports = factory(
+            require('StopWatchExporter'),
+            require('PHPJS')
+        );
     } else {
         window.StopWatchSymfonyExporter = factory(
-            window.StopWatchExporter
+            window.StopWatchExporter,
+            window.PHPJS
         );
     }
 
-}(window, function (StopWatchExporter) {
+}(window, function (StopWatchExporter,PHPJS) {
     'use strict';
 
     /**
@@ -26,7 +33,11 @@
 
     SymfonyExporter.prototype = new StopWatchExporter();
 
-    SymfonyExporter.prototype.getExportData = function () {
+    SymfonyExporter.prototype.getExportData = function (options) {
+        this.stopWatch.start('SymfonyExporter','internal');
+        this.options = !!options ? options : {};
+        this.options.timeLimit = !!this.options.timeLimit ? this.options.timeLimit : PHPJS.microtime(true);
+
         var index1, index2, data = {
             "max": 0,
             "requests": this._exportSections(this.stopWatch.getOrigin(), this.stopWatch.getSections()),
@@ -43,6 +54,7 @@
                 }
             }
         }
+        this.stopWatch.stop('SymfonyExporter','internal');
         return data;
     };
 
@@ -69,6 +81,7 @@
                 continue;
             }
             var section = sections[index];
+            var left = section.getOrigin() - origin;
             result.push({
                 "id": section.getId(),
                 "left": section.getOrigin() - origin,
@@ -85,6 +98,13 @@
                 continue;
             }
             var event = events[eventName];
+
+            var now = PHPJS.microtime(true)*1000;
+            var timeOffset = now - this.options.timeLimit*1000;
+            if ( (origin+event.getEndTime()) < timeOffset ) {
+                continue;
+            }
+
             result.push({
                 "name": eventName,
                 "category": event.getCategory(),
@@ -103,6 +123,13 @@
         var result = [];
         for (var index = 0; index < periods.length; index++) {
             var period = periods[index];
+
+            var now = PHPJS.microtime(true)*1000;
+            var timeOffset = now - this.options.timeLimit*1000;
+            if ( (origin+period.getEndTime()) < timeOffset ) {
+                continue;
+            }
+
             result.push({
                 "start": period.getStartTime(),
                 "end": period.getEndTime()

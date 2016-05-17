@@ -69,6 +69,8 @@
             if (!window.performance.timing.loadEventEnd) {
                 return;
             }
+            clearInterval(interval);
+
             self.sections['main'].addEventPeriod('__section__.child','system',
                 window.performance.timing.domainLookupStart,
                 window.performance.timing.loadEventEnd,
@@ -79,7 +81,6 @@
                 window.performance.timing.loadEventEnd,
                 1
             );
-
             self.sections['main'].addEventPeriod('System.DNS','section',
                 window.performance.timing.domainLookupStart,
                 window.performance.timing.domainLookupEnd,
@@ -120,8 +121,7 @@
                 window.performance.timing.loadEventEnd,
                 1
             );
-            clearInterval(interval);
-        });
+        },10);
 
         if ( !!window.performance && !!window.performance.memory && !!window.performance.memory.usedJSHeapSize) {
             this.memoryStats.total = window.performance.memory.jsHeapSizeLimit;
@@ -250,6 +250,15 @@
 
     StopWatch.prototype.getMemoryStats = function() {
         return this.memoryStats;
+    };
+
+    StopWatch.prototype.jQuery = function(jQuery) {
+        jQuery(window.document).bind("ajaxStart", function(){
+            _StopWatch.start('ajax','requests');
+        }).bind("ajaxStop", function(){
+            _StopWatch.stop('ajax','requests');
+        });
+        return this;
     };
 
     var _StopWatch = new StopWatch();

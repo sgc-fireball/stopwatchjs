@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StopWatchJS</title>
+</head>
+<body data-stopwatch="1">
+<h1>StopWatchJS</h1>
+<script type="text/javascript"
+        src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.22/require.js"></script>
+<script type="text/javascript">
+    require.config({
+        paths: {
+            "StopWatch": "../src",
+            "jquery": "//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery"
+        }
+    });
+    define('main',['StopWatch/StopWatch','jquery'],function(StopWatch,$){
+        // init jQuery Ajax Support
+        StopWatch.jQuery(jQuery);
+
+        setTimeout(function(){
+            $.get('https://www.google.de');
+        },2500);
+
+        require([
+            'StopWatch/StopWatchExporter/SymfonyExporter',
+            'StopWatch/StopWatchViewer/SymfonyViewer'
+        ],function(SymfonyExporter,SymfonyViewer) {
+            window.viewer = (new SymfonyViewer({update:1,timeLimit:9999})).setStopWatchExporter( (new SymfonyExporter()).setStopWatch(StopWatch));
+            window.viewer.open();
+            window.openStopWatchViewer = function(){window.viewer.open();};
+        });
+    });
+    require(['main']);
+</script>
+</body>
+</html>
